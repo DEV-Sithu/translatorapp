@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    android:fitsSystemWindows="true"
+    android:id="@+id/main"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/CustomToolbarStyle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <LinearLayout
+        android:layout_marginTop="?android:actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:background="@color/white"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayout"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEnglish"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Myanmar text"
+                android:inputType="textMultiLine"
+                android:minLines="10"
+                android:gravity="start"
+                android:importantForAutofill="no"
+                android:maxLines="15"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTranslate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Translate"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"
+            style="@style/Widget.MaterialComponents.Button"
+            app:icon="@drawable/ic_translate"
+            app:iconTint="@android:color/white"
+           />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvMyanmar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:inputType="textMultiLine"
+            android:minLines="10"
+            android:gravity="start"
+            android:importantForAutofill="no"
+            android:maxLines="15"
+            android:padding="16dp"
+            android:background="@drawable/bg_transaltion_output"
+            android:textSize="16sp"
+            android:hint="Translated English text will appear here"
+          />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

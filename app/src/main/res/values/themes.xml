@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Translatorapp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+         <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
+
+    <style name="Theme.Translatorapp" parent="Base.Theme.Translatorapp" />
+
+    <style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="titleTextAppearance">@style/CustomToolbarTitleText</item>
+    </style>
+
+    <style name="CustomToolbarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+</resources>
