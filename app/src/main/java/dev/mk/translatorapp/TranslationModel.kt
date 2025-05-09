@@ -22,7 +22,7 @@ class TranslationViewModel : ViewModel() {
         viewModelScope.launch {
             _translationResult.value = TranslationResult.Loading
             try {
-                val response = repository.translateMMToEng(text)
+                val response = repository.translate(text)
                 if (response.isSuccessful) {
                     val translatedText = response.body()?.choices?.firstOrNull()?.message?.content
                         ?: throw Exception("Translation failed")

@@ -1,6 +1,13 @@
 package dev.mk.translatorapp
 
+import android.R
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -10,11 +17,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import dev.mk.translatorapp.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: TranslationViewModel by viewModels()
 
+    private var isEnglishToMyanmar = true // Default mode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Translator App"
+        supportActionBar?.title = "Translator (DeepSeek API)"
 
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -37,10 +46,61 @@ class MainActivity : AppCompatActivity() {
         observeViewModel()
 
     }
+    fun copyText() {
 
+        val text = binding.tvMyanmar.text
+
+        val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Copied Text", text)
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(this, "Text copied!", Toast.LENGTH_SHORT).show()
+    }
+
+    fun shareText() {
+        val text = binding.tvMyanmar.text
+
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.setType("text/plain")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
+    }
     private fun setupUI() {
+
+        binding.progressBar.startAutoLoop()
+
+        binding.shareId.setOnClickListener {
+           shareText()
+        }
+        binding.copyId.setOnClickListener {
+           copyText()
+        }
+
+
         binding.btnTranslate.setOnClickListener {
-            viewModel.translateText(binding.etEnglish.text.toString())
+            val inputText = binding.etEnglish.text.toString()
+            if (isEnglishToMyanmar) {
+                viewModel.translateText("Translate to English: $inputText") // English to Myanmar
+            } else {
+                viewModel.translateText("Translate to Myanmar: $inputText") // Myanmar to English
+            }
+        }
+
+        binding.switchLanguage.setOnCheckedChangeListener { _, isChecked ->
+            isEnglishToMyanmar = isChecked
+            binding.switchLanguage.text = if (isChecked) {
+                "Myanmar to English"
+            } else {
+                "English to Myanmar"
+            }
+            if(isChecked){
+                binding.etEnglish.hint  = Editable.Factory.getInstance().newEditable("Enter Myanmar Text")
+                binding.tvMyanmar.hint  = "Translated English text will be appear here"
+
+            }else{
+                binding.etEnglish.hint  = Editable.Factory.getInstance().newEditable("Enter English Text")
+                binding.tvMyanmar.hint  = "ဘာသာပြန်ထားသောစာားများဒီ နေရာတွင်မကြာခင်ပြသပါမည်"
+            }
         }
     }
 
@@ -48,12 +108,16 @@ class MainActivity : AppCompatActivity() {
         viewModel.translationResult.observe(this) { result ->
             when (result) {
                 is TranslationResult.Success -> {
-                    binding.tvMyanmar.text = result.translatedText
+                    binding.progressBar.stopAutoLoop()
+                    binding.progressBar.visibility = View.GONE
+                    binding.tvMyanmar.text = Editable.Factory.getInstance().newEditable(result.translatedText)
                 }
                 is TranslationResult.Error -> {
+                    binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
                 is TranslationResult.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
                     // Handle loading state
                 }
             }
