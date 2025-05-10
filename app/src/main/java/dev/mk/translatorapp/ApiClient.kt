@@ -17,7 +17,7 @@ object ApiClient {
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${Constants.API_KEY}")
+                    .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
                     .addHeader("Content-Type", "application/json")
                     .build()
                 chain.proceed(request)

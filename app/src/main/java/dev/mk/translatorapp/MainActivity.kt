@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
     }
     private fun setupUI() {
 
-        binding.progressBar.startAutoLoop()
 
         binding.shareId.setOnClickListener {
            shareText()
@@ -84,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             } else {
                 viewModel.translateText("Translate to Myanmar: $inputText") // Myanmar to English
             }
+            binding.tvMyanmar.text   =  Editable.Factory.getInstance().newEditable("")
+
         }
 
         binding.switchLanguage.setOnCheckedChangeListener { _, isChecked ->
@@ -117,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
                 is TranslationResult.Loading -> {
+                    binding.progressBar.startAutoLoop()
                     binding.progressBar.visibility = View.VISIBLE
                     // Handle loading state
                 }
