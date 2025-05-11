@@ -1,13 +1,13 @@
 package dev.mk.translatorapp
 
-import android.R
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -32,23 +32,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val toolbar: Toolbar = binding.toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar?.title = "Translator (DeepSeek API)"
-
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val toolbar: Toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Translator (DeepSeek API)"
+
+
         setupUI()
         observeViewModel()
 
     }
     fun copyText() {
 
-        val text = binding.tvMyanmar.text
+        val text = binding.etOutputText.text
 
         val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Copied Text", text)
@@ -58,15 +59,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun shareText() {
-        val text = binding.tvMyanmar.text
+        val text = binding.etOutputText.text
 
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")
         shareIntent.putExtra(Intent.EXTRA_TEXT, text)
         startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
-    private fun setupUI() {
 
+    private fun setupUI() {
 
         binding.shareId.setOnClickListener {
            shareText()
@@ -75,33 +76,39 @@ class MainActivity : AppCompatActivity() {
            copyText()
         }
 
+        checkEngMM()
 
         binding.btnTranslate.setOnClickListener {
-            val inputText = binding.etEnglish.text.toString()
+            val inputText = binding.etInputText.text.toString()
             if (isEnglishToMyanmar) {
-                viewModel.translateText("Translate to English: $inputText") // English to Myanmar
+                viewModel.translateText("Translate to Myanmar: $inputText") // English to Myanmar
             } else {
-                viewModel.translateText("Translate to Myanmar: $inputText") // Myanmar to English
+                viewModel.translateText("Translate to English: $inputText") // Myanmar to English
             }
-            binding.tvMyanmar.text   =  Editable.Factory.getInstance().newEditable("")
+            binding.etOutputText.text   =  Editable.Factory.getInstance().newEditable("")
 
         }
 
         binding.switchLanguage.setOnCheckedChangeListener { _, isChecked ->
             isEnglishToMyanmar = isChecked
             binding.switchLanguage.text = if (isChecked) {
-                "Myanmar to English"
-            } else {
                 "English to Myanmar"
+            } else {
+                "Myanmar to English"
             }
-            if(isChecked){
-                binding.etEnglish.hint  = Editable.Factory.getInstance().newEditable("Enter Myanmar Text")
-                binding.tvMyanmar.hint  = "Translated English text will be appear here"
+            checkEngMM()
+        }
+    }
+    fun checkEngMM()
+    {
+        if(isEnglishToMyanmar){
+            binding.etInputText.hint  = Editable.Factory.getInstance().newEditable("Enter English Text")
+            binding.etOutputText.hint  = "ဘာသာပြန်ထားသောစာားများဒီ နေရာတွင်မကြာခင်ပြသပါမည်"
 
-            }else{
-                binding.etEnglish.hint  = Editable.Factory.getInstance().newEditable("Enter English Text")
-                binding.tvMyanmar.hint  = "ဘာသာပြန်ထားသောစာားများဒီ နေရာတွင်မကြာခင်ပြသပါမည်"
-            }
+        }else{
+            binding.etInputText.hint  = Editable.Factory.getInstance().newEditable("စာသားထည့်ပါ")
+            binding.etOutputText.hint  = "Translated English text will be appear here"
+
         }
     }
 
@@ -111,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                 is TranslationResult.Success -> {
                     binding.progressBar.stopAutoLoop()
                     binding.progressBar.visibility = View.GONE
-                    binding.tvMyanmar.text = Editable.Factory.getInstance().newEditable(result.translatedText)
+                    binding.etOutputText.text = Editable.Factory.getInstance().newEditable(result.translatedText)
                 }
                 is TranslationResult.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -123,6 +130,24 @@ class MainActivity : AppCompatActivity() {
                     // Handle loading state
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.context_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_clear -> {
+                binding.etInputText.text = Editable.Factory.getInstance().newEditable("")
+                binding.etOutputText.text = Editable.Factory.getInstance().newEditable("")
+                checkEngMM()
+                Toast.makeText(this, "Clear ", Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

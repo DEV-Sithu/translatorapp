@@ -12,8 +12,8 @@
         <item name="titleTextAppearance">@style/CustomToolbarTitleText</item>
     </style>
 
-    <style name="CustomToolbarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textSize">14sp</item>
+    <style name="CustomToolbarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

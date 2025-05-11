@@ -1,6 +1,10 @@
 package dev.mk.translatorapp
 
 // TranslationRepository.kt
+import android.annotation.SuppressLint
+import android.os.Build
+import android.view.translation.TranslationRequest
+import androidx.annotation.RequiresApi
 import retrofit2.Response
 
 class TranslationRepository {
@@ -21,5 +25,6 @@ class TranslationRepository {
             )
         )
     }
+
 
 }

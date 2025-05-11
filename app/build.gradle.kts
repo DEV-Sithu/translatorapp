@@ -26,9 +26,14 @@ android {
             }
         }
 
-        // Fetch the API key (use empty string as fallback)
-        val apiKey = localProperties.getProperty("API_KEY") ?: "\"\""
-        buildConfigField("String", "API_KEY", apiKey)
+        val apiKey = localProperties.getProperty("DEEKSEEK_API_KEY")
+            ?: throw GradleException("API_KEY not found in local.properties")
+
+        // Expose to BuildConfig
+        buildConfigField("String", "DEEKSEEK_API_KEY", apiKey)
+
+        // Optional: Expose to AndroidManifest.xml (if needed)
+        // manifestPlaceholders["apiKey"] = apiKey
 
     }
 
@@ -52,9 +57,11 @@ android {
     viewBinding{
         enable = true
     }
+
     buildFeatures {
         buildConfig = true
-    }
+         }
+
 }
 
 dependencies {
